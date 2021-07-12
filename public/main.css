@@ -1,0 +1,110 @@
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: Lobster, sans-serif;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    padding: 0;
+}
+
+.app {
+    display: flex;
+}
+
+.app__create-btn {
+    height: fit-content;
+    margin: 10px;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #bd0707;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 10px 10px #ccc;
+    font-weight: 600;
+}
+
+
+.app__create-btn:hover {
+    background-color: #9c0b0b;
+}
+
+.column {
+    flex-shrink: 0;
+    margin: 10px;
+    width: 250px;
+    height: fit-content;
+
+    border-radius: 4px;
+
+    box-shadow: 0 1px 10px #ccc;
+}
+
+.column__title {
+    padding: 5px;
+
+    font-size: 20px;
+    background-color: #ccc;
+    text-align: center;
+    word-wrap: break-word;
+
+    cursor: pointer;
+}
+
+.column__cards {
+    padding: 10px;
+}
+
+.column__button {
+    width: 100%;
+
+    padding: 10px;
+
+    border: none;
+    cursor: pointer;
+
+    font-size: 15px;
+
+    transition: background-color .2s linear;
+}
+
+.column__button:hover {
+    background-color: #ccc;
+}
+
+.cards__card {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+    text-align: center;
+    cursor: pointer;
+    word-wrap: break-word;
+
+    box-shadow: 0 1px 0 #ccc;
+    transition: background-color .2s ease-in-out;
+}
+
+.cards__card:hover {
+    background-color: #ccc;
+}
+
+.cards__card + .cards__card {
+    margin-top: 5px;
+}
