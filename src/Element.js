@@ -95,9 +95,6 @@ export function createEl(node) {
     }
 
     const $el = document.createElement(node.type);
-    if (node.props.text) {
-        $el.textContent = node.props.text;
-    }
     setProps($el, node.props);
     addEventListeners($el, node.props);
     node.children

@@ -11,6 +11,12 @@ html {
 
 body {
     height: 100%;
+    margin: 0;
+}
+
+input {
+    margin: 0;
+    padding: 0;
 }
 
 h1,
@@ -23,8 +29,15 @@ h6 {
     padding: 0;
 }
 
+#root {
+    height: 100%;
+}
+
 .app {
     display: flex;
+    background: url("https://source.unsplash.com/collection/nature/1600x900");
+    background-size: cover;
+    height: 100%;
 }
 
 .app__create-btn {
@@ -33,53 +46,71 @@ h6 {
     padding: 15px;
     border: none;
     border-radius: 8px;
-    background-color: #bd0707;
+    background-color: #de8b7c;
     color: #fff;
     cursor: pointer;
-    box-shadow: 0 10px 10px #ccc;
+    box-shadow: 0 4px 10px #000;
     font-weight: 600;
+
+    transition: background-color .2s ease-in-out;
 }
 
 
 .app__create-btn:hover {
-    background-color: #9c0b0b;
+    background-color: #dca094;
+}
+
+.app__columns {
+    display: flex;
 }
 
 .column {
     flex-shrink: 0;
     margin: 10px;
+    padding: 10px;
     width: 250px;
     height: fit-content;
 
     border-radius: 4px;
-
-    box-shadow: 0 1px 10px #ccc;
+    border: 1px solid #ebecf0;
+    background-color: #ebecf0;
 }
 
 .column__title {
-    padding: 5px;
+    width: 100%;
 
-    font-size: 20px;
-    background-color: #ccc;
-    text-align: center;
+    margin-bottom: 5px;
+    padding: 5px;
+    border: none;
+    border-radius: 4px;
+
+    font-size: 18px;
+    font-weight: 600;
+    text-align: left;
     word-wrap: break-word;
 
-    cursor: pointer;
+    cursor: text;
+    outline: none;
 }
 
-.column__cards {
-    padding: 10px;
+.column__title:focus {
+    background-color: #fff;
 }
 
 .column__button {
     width: 100%;
 
     padding: 10px;
+    margin-top: 5px;
 
     border: none;
+    border-radius: 4px;
     cursor: pointer;
 
+    text-align: left;
     font-size: 15px;
+
+    background-color: transparent;
 
     transition: background-color .2s linear;
 }
@@ -89,9 +120,10 @@ h6 {
 }
 
 .cards__card {
-    padding: 5px;
-    border: 1px solid #ccc;
+    padding: 10px;
+
     border-radius: 4px;
+    background-color: #fff;
 
     text-align: center;
     cursor: pointer;
@@ -107,4 +139,12 @@ h6 {
 
 .cards__card + .cards__card {
     margin-top: 5px;
+}
+
+.card__input {
+    border: 1px solid #ccc;
+}
+
+.column__form {
+    display: flex;
 }

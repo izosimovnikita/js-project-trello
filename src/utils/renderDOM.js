@@ -1,3 +1,6 @@
+import Factory from "../components/Factory";
+import App from "../App";
+
 function evaluate(virtualNode) {
     if (typeof virtualNode !== 'object') {
         return virtualNode;
@@ -18,12 +21,31 @@ function evaluate(virtualNode) {
     }
 }
 
+function isEventProp(name) {
+    return /^on/.test(name);
+}
+
+function extractEventName(name) {
+    return name.slice(2).toLowerCase();
+}
+
+function addEventListeners(target, name, props) {
+    target.addEventListener(
+        extractEventName(name),
+        props
+    );
+}
+
 function sync(virtualNode, realNode) {
     // Sync element
     if (virtualNode.props) {
         Object.entries(virtualNode.props).forEach(([name, value]) => {
             if (name === 'children' || name === 'key') {
                 return;
+            }
+
+            if (isEventProp(name)) {
+                addEventListeners(realNode, name, value);
             }
 
             if (realNode[name] !== value) {
@@ -81,14 +103,14 @@ function createRealNodeByVirtual(virtualChild) {
     return document.createElement(virtualChild.type);
 }
 
-export function render(virtualDom, realDomRoot) {
+export default function render(virtualDom, realDomRoot) {
     const evaluatedVirtualDom = evaluate(virtualDom);
 
     const virtualDomRoot = {
         type: realDomRoot.tagName.toLowerCase(),
         props: {
             id: realDomRoot.id,
-            ...realDomRoot.attributes,
+            ...realDomRoot.props,
             children: [
                 evaluatedVirtualDom
             ]
@@ -96,4 +118,11 @@ export function render(virtualDom, realDomRoot) {
     }
 
     sync(virtualDomRoot, realDomRoot);
+}
+
+export function renderView(state) {
+    render(
+        Factory.createElement(App, { state }),
+        document.getElementById('root')
+    )
 }

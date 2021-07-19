@@ -2,7 +2,7 @@ import {Mediator} from '../modules/mediator';
 
 // Basic class
 export default class Factory {
-    constructor(tagName = 'div', props = {}) {
+    constructor(props = {}) {
         const mediator = new Mediator();
     }
 
