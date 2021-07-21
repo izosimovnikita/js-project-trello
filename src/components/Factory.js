@@ -6,6 +6,10 @@ export default class Factory {
         const mediator = new Mediator();
     }
 
+    appendTo(parent) {
+        parent.append(this);
+    }
+
     static createElement(type, config, ...children) {
         const key = config ? (config.key || null) : null;
         const props = config || {};

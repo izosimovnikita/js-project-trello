@@ -35,21 +35,25 @@ h6 {
 
 .app {
     display: flex;
-    background: url("https://source.unsplash.com/collection/nature/1600x900");
+    background: url("https://source.unsplash.com/collection/nature");
     background-size: cover;
     height: 100%;
+    overflow: auto;
 }
 
 .app__create-btn {
     height: fit-content;
+    min-width: 210px;
+
     margin: 10px;
     padding: 15px;
     border: none;
-    border-radius: 8px;
-    background-color: #de8b7c;
+    border-bottom: 2px solid #000;
+    border-radius: 4px;
+
+    background-color: rgba(222, 139, 124, 0.9);
     color: #fff;
     cursor: pointer;
-    box-shadow: 0 4px 10px #000;
     font-weight: 600;
 
     transition: background-color .2s ease-in-out;
@@ -65,6 +69,8 @@ h6 {
 }
 
 .column {
+    position: relative;
+    
     flex-shrink: 0;
     margin: 10px;
     padding: 10px;
@@ -74,6 +80,12 @@ h6 {
     border-radius: 4px;
     border: 1px solid #ebecf0;
     background-color: #ebecf0;
+
+    cursor: move;
+}
+
+.column:hover .column__icon {
+    opacity: 1;
 }
 
 .column__title {
@@ -119,32 +131,225 @@ h6 {
     background-color: #ccc;
 }
 
+.column__icon {
+    position: absolute;
+    top: 12px;
+    right: 9px;
+
+    padding: 5px;
+    border-radius: 4px;
+
+    cursor: pointer;
+    opacity: 0;
+
+    transition: opacity .2s ease-in-out, background-color .2s ease-in-out;
+}
+
+.column__icon:hover {
+    background-color: rgba(170, 13, 13, 0.7);
+}
+
+.cards {
+    overflow-y: auto;
+}
+
 .cards__card {
+    position: relative;
+}
+
+.cards__card + .cards__card {
+    margin-top: 7px;
+}
+
+.cards__card.card:hover .card__icon {
+    opacity: 1;
+}
+
+.card {
+    cursor: pointer;
+}
+
+.card__icon {
+    position: absolute;
+    top: 7px;
+    right: 5px;
+
+    padding: 5px;
+    border-radius: 4px;
+
+    opacity: 0;
+
+    transition: opacity .2s ease-in-out, background-color .2s ease-in-out;
+}
+
+.card__icon:hover {
+    background-color: #e5e4e4;
+}
+
+.card__input {
+    width: 100%;
+
     padding: 10px;
 
     border-radius: 4px;
+    border: none;
     background-color: #fff;
 
-    text-align: center;
     cursor: pointer;
+    text-align: center;
     word-wrap: break-word;
 
     box-shadow: 0 1px 0 #ccc;
     transition: background-color .2s ease-in-out;
 }
 
-.cards__card:hover {
-    background-color: #ccc;
+.card__input:hover {
+    opacity: .6;
 }
 
-.cards__card + .cards__card {
+.card__save {
+    padding: 10px;
     margin-top: 5px;
+    margin-right: 7px;
+    border: none;
+    border-bottom: 2px solid #000;
+    border-radius: 4px;
+
+    color: #fff;
+    background-color: #41d427;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+
+    transition: opacity .2s ease-in-out;
 }
 
-.card__input {
-    border: 1px solid #ccc;
+.card__save:hover {
+    opacity: .6;
+}
+
+.card__delete {
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: none;
+    border-bottom: 2px solid #000;
+
+    color: #fff;
+    background-color: #aa0d0d;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+
+    transition: opacity .2s ease-in-out;
+}
+
+.card__delete:hover {
+    opacity: .6;
 }
 
 .column__form {
     display: flex;
+}
+
+.selected-column {
+    opacity: 0;
+}
+
+.selected-card {
+    opacity: 0;
+}
+
+.pencil-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.trash-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.card__field {
+    width: 100%;
+
+    padding: 10px;
+
+    border-radius: 4px;
+    border: none;
+    background-color: #fff;
+
+    cursor: pointer;
+    text-align: center;
+    word-wrap: break-word;
+
+    box-shadow: 0 1px 0 #ccc;
+    transition: background-color .2s ease-in-out;
+}
+
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    position: fixed;
+    opacity: 0;
+    visibility: hidden;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+
+    padding: 60px 15px;
+
+    background: rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.modal__active {
+    visibility: visible;
+    opacity: 1;
+    transition: .3s;
+}
+
+.modal__content {
+    position: relative;
+
+    width: 100%;
+    max-width: 500px;
+
+    border-radius: 3px;
+    padding: 50px;
+
+    background: #f9f9f9;
+    text-align: center;
+    box-shadow: 0 5px 15px black;
+}
+
+.modal__close-button {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 30px;
+    width: 30px;
+
+    border: none;
+    border-radius: 50%;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    background: none;
+    cursor: pointer;
+    transition: .3s;
+    outline: none;
+}
+
+.modal__close-button:hover {
+    background: #ff0000;
+    transition: .3s;
+    transform: rotate(180deg);
 }

@@ -71,10 +71,18 @@ function extractEventName(name) {
 function addEventListeners($target, props) {
     Object.keys(props).forEach(name => {
         if (isEventProp(name)) {
-            $target.addEventListener(
-                extractEventName(name),
-                props[name]
-            );
+            if (Array.isArray(props[name])) {
+                $target.addEventListener(
+                    extractEventName(name),
+                    props[name][0],
+                    props[name][1]
+                )
+            } else {
+                $target.addEventListener(
+                    extractEventName(name),
+                    props[name]
+                )
+            }
         }
     });
 }
@@ -92,6 +100,10 @@ export function h(type, props, ...children) {
 export function createEl(node) {
     if (typeof node === 'string') {
         return document.createTextNode(node);
+    }
+
+    if (node instanceof Element) {
+        return node;
     }
 
     const $el = document.createElement(node.type);

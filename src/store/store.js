@@ -1,7 +1,9 @@
+import {columnsReducer} from "./reducers/reducer";
+
 export const createStore = (reducer) => {
     return {
         listeners: [],
-        state: null,
+        state: undefined,
         dispatch(action) {
             this.state = reducer(this.state, action);
             this.listeners.forEach(listener => listener(this.state))
@@ -11,3 +13,7 @@ export const createStore = (reducer) => {
         }
     }
 }
+
+const store = createStore(columnsReducer)
+
+export default store;
