@@ -1,9 +1,10 @@
-import Column from "./components/column/column.component";
-import Modal from "./components/modal/modal.component";
+import Column from "./components/column/column.module";
+import Modal from "./components/modal/modal.module";
 import {createEl, h} from "./utils/Element";
 
 import store from "./store/store";
 import {addColumn} from "./store/reducers/actions";
+import Button from "./components/button/button.component";
 
 let draggedItem = null;
 let idColumn = 0;
@@ -13,10 +14,10 @@ store.subscribe((state) => console.log(state))
 function createColumn() {
     store.dispatch(addColumn({title: 'Новая колонка', idColumn}));
 
-    const column = new Column({idColumn});
+    const column = new Column({idColumn}, {className: 'columns__column column', draggable: true}).render();
     idColumn++;
 
-    document.querySelector('.columns').append(createEl(column.render()));
+    document.querySelector('.columns').append(createEl(column));
 }
 
 function dragStart(event) {
@@ -61,8 +62,12 @@ function dragEnter(event) {
 }
 
 export default function App() {
-    const modal = new Modal({title: 'Введите название карточки!'});
-    document.body.append(modal.render());
+    const addColumnBtn = new Button('button', {className: 'app__create-btn', onclick: createColumn}, '+ Добавить' +
+        ' новую колонку').render();
+
+    const modal = new Modal({title: 'Введите название карточки!'}, {className: 'modal'}).render();
+
+    document.body.append(modal);
 
     return createEl(
         h('div', {className: 'app'},
@@ -73,7 +78,7 @@ export default function App() {
                 ondragenter: dragEnter,
                 ondragover: dragOver
             }),
-            h('button', {className: 'app__create-btn', onclick: createColumn}, '+ Добавить новую колонку')
+            (addColumnBtn)
         )
     )
 }

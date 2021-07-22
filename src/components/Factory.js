@@ -1,30 +1,31 @@
 import {Mediator} from '../modules/mediator';
+import {createEl, h} from "../utils/Element";
 
 // Basic class
 export default class Factory {
-    constructor(props = {}) {
+    constructor(tagName = 'div', props = {}, children = []) {
         const mediator = new Mediator();
+
+        if (children.length) {
+            this.node = createEl(h(tagName, props, children));
+        } else {
+            this.node = createEl(h(tagName, props));
+        }
     }
 
     appendTo(parent) {
-        parent.append(this);
+        parent.append(this.node);
     }
 
-    static createElement(type, config, ...children) {
-        const key = config ? (config.key || null) : null;
-        const props = config || {};
-        props.children = children;
+    addHandler(name, func) {
+        this.node.addEventListener(name, func);
+    }
 
-        if (children.length === 1) {
-            props.children = children[0];
-        } else {
-            props.children = children;
-        }
+    render() {
+        const element = this.node;
 
-        return {
-            type,
-            key,
-            props
-        }
+        return (
+            element
+        )
     }
 }

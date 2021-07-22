@@ -1,7 +1,7 @@
 import {ADD_CARD, DELETE_CARD, EDIT_CARD} from "./actions";
 
 const initialState = {
-    card: {}
+    cards: {}
 }
 
 const cardsReducer = (state = initialState, action) => {

@@ -1,33 +1,22 @@
 import Factory from "../Factory";
-import Cards from "../cards/cards.component";
-import Card from "../card/card.component";
+import Cards from "../cards/cards.module";
+import Card from "../card/card.module";
+import Button from "../button/button.module";
 import {createEl, h} from "../../utils/Element";
 
 import store from "../../store/store";
 import {addCard, deleteColumn} from "../../store/reducers/actions";
 
 class Column extends Factory {
-    constructor(props) {
-        super();
+    constructor(state, props) {
+        super('div', props);
 
         this.state = {
             draggedItem: null,
-            idColumn: props.idColumn,
-            idCard: 0
+            idColumn: state.idColumn
         }
 
-        this.cards = createEl(
-            new Cards({idColumn: this.state.id}).render()
-        );
-    }
-
-    createCard() {
-        store.dispatch(addCard({cardText: '', idColumn: this.state.idColumn, idCard: this.state.idCard}))
-
-        const card = new Card({idCard: this.state.idCard, idColumn: this.state.idColumn});
-        this.cards.append(createEl(card.render()));
-
-        this.state.idCard += 1;
+        this.cards = new Cards({idColumn: this.state.idColumn}, {className: 'column__cards-box cards-box'}).render();
     }
 
     _deleteColumn(parent) {
@@ -49,38 +38,32 @@ class Column extends Factory {
     }
 
     render() {
-        const column = createEl(h('div', {className: 'columns__column column', draggable: true}));
+        const column = this.node;
 
-        const columnTitle = createEl(
-            h('div', {
-                className: 'column__title',
-                onblur: this._onBlur,
-                ondblclick: this._dblClick,
-                contentEditable: true
-            }, 'Новая' +
-                ' колонка')
-        )
+        const columnTitle = new Factory('div', {
+            className: 'column__title',
+            onblur: this._onBlur,
+            ondblclick: this._dblClick,
+            contentEditable: true
+        }, 'Новая' +
+            ' колонка').render()
 
-        const columnButton = createEl(
-            h('button', {
+        const columnAddButton = new Button('button', {
                 className: 'column__button button',
                 onclick: () => this.createCard(this.state.idColumn)
-            }, '+ Добавить' +
-                ' карточку')
-        )
+            }, '+ Добавить карточку').render();
 
-        const columnIcon = createEl(
-            h('img', {
-                className: 'column__icon trash-icon',
-                src: 'https://image.flaticon.com/icons/png/512/748/748023.png',
-                onclick: () => this._deleteColumn(column)
-            })
-        )
+        const columnDeleteIconBtn = new Button('img', {
+                    className: 'column__icon trash-icon',
+                    src: 'https://image.flaticon.com/icons/png/512/748/748023.png',
+                    onclick: () => this._deleteColumn(column)
+                }
+            ).render()
 
         column.append(columnTitle);
         column.append(this.cards)
-        column.append(columnButton);
-        column.append(columnIcon);
+        // column.append(columnAddButton);
+        column.append(columnDeleteIconBtn);
 
         return (
             column

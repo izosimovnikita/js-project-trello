@@ -32,6 +32,8 @@ function setProp($target, name, value) {
         return;
     } else if (name === 'className') {
         $target.setAttribute('class', value)
+    } else if (name.slice(0, 4) === 'data') {
+        $target.dataset.id = value;
     } else if (typeof value === 'boolean') {
         setBooleanProp($target, name, value);
     } else {
