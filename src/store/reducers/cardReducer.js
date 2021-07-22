@@ -1,34 +1,12 @@
-const initialState = {};
+import {ADD_CARD, DELETE_CARD, EDIT_CARD} from "./actions";
 
-const newId = (columns) => {
-    return columns.reduce((maxId, column) => Math.max(maxId, column.id), -1) + 1;
+const initialState = {
+    card: {}
 }
 
-export const columnsReducer = (state = initialState, action) => {
+const cardsReducer = (state = initialState, action) => {
     switch (action.type) {
-        case 'ADD_COLUMN': {
-            const {title, idColumn} = action.payload;
-            return {
-                ...state,
-                [idColumn]: {
-                    id: idColumn,
-                    title,
-                    cards: []
-                }
-            }
-        }
-        case 'DELETE_COLUMN': {
-            const {idColumn} = action.payload;
-            const { [idColumn]: deletedColumn, ...restOfColumn } = state;
-            return state = restOfColumn;
-        }
-        case 'EDIT_COLUMN_TITLE': {
-            const {idColumn, newColumnTitle} = action.payload;
-            return {
-
-            }
-        }
-        case 'ADD_CARD': {
+        case ADD_CARD: {
             const {cardText, idColumn, idCard} = action.payload;
             return {
                 ...state,
@@ -44,9 +22,9 @@ export const columnsReducer = (state = initialState, action) => {
                 }
             }
         }
-        case 'DELETE_CARD': {
+        case DELETE_CARD: {
             const {idColumn, idCard} = action.payload;
-            const { [idCard]: deletedCard, ...restOfCards } = state[idColumn].cards
+            const {[idCard]: deletedCard, ...restOfCards} = state[idColumn].cards
             return {
                 ...state,
                 [idColumn]: {
@@ -55,7 +33,7 @@ export const columnsReducer = (state = initialState, action) => {
                 }
             }
         }
-        case 'EDIT_CARD': {
+        case EDIT_CARD: {
             const {newCardText, idCard, idColumn} = action.payload;
             return {
                 ...state,
@@ -75,3 +53,4 @@ export const columnsReducer = (state = initialState, action) => {
             return state;
     }
 }
+export default cardsReducer;

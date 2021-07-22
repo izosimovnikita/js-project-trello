@@ -1,7 +1,7 @@
 import Factory from "../Factory";
+import {createEl, h} from "../../utils/Element";
 
 import store from "../../store/store";
-import {createEl, h} from "../../utils/Element";
 
 export default class Cards extends Factory {
     constructor(props) {

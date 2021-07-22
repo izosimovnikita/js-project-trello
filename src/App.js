@@ -1,7 +1,9 @@
 import Column from "./components/column/column.component";
-import {createEl, h} from "./utils/Element";
-import store from "./store/store";
 import Modal from "./components/modal/modal.component";
+import {createEl, h} from "./utils/Element";
+
+import store from "./store/store";
+import {addColumn} from "./store/reducers/actions";
 
 let draggedItem = null;
 let idColumn = 0;
@@ -9,13 +11,7 @@ let idColumn = 0;
 store.subscribe((state) => console.log(state))
 
 function createColumn() {
-    store.dispatch({
-        type: 'ADD_COLUMN',
-        payload: {
-            title: 'Новая колонка',
-            idColumn
-        }
-    })
+    store.dispatch(addColumn({title: 'Новая колонка', idColumn}));
 
     const column = new Column({idColumn});
     idColumn++;

@@ -1,6 +1,8 @@
 import Factory from "../Factory";
-import store from "../../store/store";
 import {createEl, h} from "../../utils/Element";
+
+import store from "../../store/store";
+import {deleteCard, editCard} from "../../store/reducers/actions";
 
 export default class Card extends Factory {
     constructor(props) {
@@ -33,28 +35,18 @@ export default class Card extends Factory {
                     form.replaceWith(div);
                 }
 
-                store.dispatch({
-                    type: 'EDIT_CARD',
-                    payload: {
-                        newCardText: this.state.value,
-                        idCard: this.state.idCard,
-                        idColumn: this.state.idColumn
-                    }
-                })
+                store.dispatch(editCard({
+                    newCardText: this.state.value,
+                    idCard: this.state.idCard,
+                    idColumn: this.state.idColumn
+                }))
 
                 break;
             }
             case 'delete': {
                 form.remove();
 
-                store.dispatch({
-                    type: 'DELETE_CARD',
-                    payload: {
-                        idCard: this.state.idCard,
-                        idColumn: this.state.idColumn
-                    }
-                })
-
+                store.dispatch(deleteCard({idCard: this.state.idCard, idColumn: this.state.idColumn}))
                 break;
             }
         }

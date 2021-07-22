@@ -1,9 +1,10 @@
 import Factory from "../Factory";
 import Cards from "../cards/cards.component";
 import Card from "../card/card.component";
+import {createEl, h} from "../../utils/Element";
 
 import store from "../../store/store";
-import {createEl, h} from "../../utils/Element";
+import {addCard, deleteColumn} from "../../store/reducers/actions";
 
 class Column extends Factory {
     constructor(props) {
@@ -21,14 +22,7 @@ class Column extends Factory {
     }
 
     createCard() {
-        store.dispatch({
-            type: 'ADD_CARD',
-            payload: {
-                cardText: '',
-                idColumn: this.state.idColumn,
-                idCard: this.state.idCard
-            }
-        })
+        store.dispatch(addCard({cardText: '', idColumn: this.state.idColumn, idCard: this.state.idCard}))
 
         const card = new Card({idCard: this.state.idCard, idColumn: this.state.idColumn});
         this.cards.append(createEl(card.render()));
@@ -39,12 +33,7 @@ class Column extends Factory {
     _deleteColumn(parent) {
         parent.remove();
 
-        store.dispatch({
-            type: 'DELETE_COLUMN',
-            payload: {
-                idColumn: this.state.idColumn
-            }
-        })
+        store.dispatch(deleteColumn({idColumn: this.state.idColumn}))
     }
 
     _dblClick() {
