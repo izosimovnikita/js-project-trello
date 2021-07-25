@@ -1,6 +1,3 @@
-import Factory from "../components/Factory";
-import App from "../App";
-
 function evaluate(virtualNode) {
     if (typeof virtualNode !== 'object') {
         return virtualNode;
@@ -118,11 +115,4 @@ export default function render(virtualDom, realDomRoot) {
     }
 
     sync(virtualDomRoot, realDomRoot);
-}
-
-export function renderView(state) {
-    render(
-        Factory.createElement(App, { state }),
-        document.getElementById('root')
-    )
 }

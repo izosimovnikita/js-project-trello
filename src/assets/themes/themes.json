@@ -1,0 +1,28 @@
+[
+  {
+    "id": "0",
+    "name": "second",
+    "colors": {
+      "primary": "#41d427",
+      "secondary": "#aa0d0d",
+      "text": "#333",
+      "border": "#5678ec",
+      "background": "#ffa500",
+      "column": "#ebecf0",
+      "shadow": "#a68e57"
+    }
+  },
+  {
+    "id": "1",
+    "name": "first",
+    "colors": {
+      "primary": "#2cb67d",
+      "secondary": "#e54d4d",
+      "text": "#333",
+      "border": "#1e28ff",
+      "background": "#004643",
+      "column": "#f9bc60",
+      "shadow": "#363624"
+    }
+  }
+]

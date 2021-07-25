@@ -1,54 +1,67 @@
-import Factory from "../Factory";
+import Factory from "../../modules/Factory";
 
 import store from "../../store/store";
 import Button from "../button/button.component";
 import Card from "../card/card.component";
 import {createEl, h} from "../../utils/Element";
-import {addCard, deleteCard, editCard} from "../../store/reducers/actions";
+import {addCard, deleteCard, editCard} from "../../store/actions/actions";
 
 export default class Cards extends Factory {
-    constructor(state, props) {
+    constructor(state, props, children) {
         super('div', props);
 
         this.addDnD(this.node);
 
         this.addCardButton = new Button('button', {
             className: 'column__button button',
-            onclick: () => this.createCard(this.state.idColumn)
+            onclick: () => this.createCard('', this.state.idCard, this.state.idColumn)
         }, '+ Добавить карточку').render();
 
         this.state = {
-            edit: false,
             idColumn: state.idColumn,
-            idCard: 0
+            idCard: 0,
+            cards: state.cards,
+            draggingItem: null,
+            edit: false
         }
     }
 
     addDnD(elem) {
-        elem.addEventListener('dragstart', this._dragStart);
-        elem.addEventListener('dragend', this._dragEnd);
-        elem.addEventListener('dragenter', this._dragEnter);
-        elem.addEventListener('dragover', this._dragOver);
+        elem.addEventListener('dragstart', (event) => this._dragStart(event));
+        elem.addEventListener('dragend', (event) => this._dragEnd(event));
+        elem.addEventListener('dragenter', (event) => this._dragEnter(event));
+        elem.addEventListener('dragover', (event) => this._dragOver(event), true);
+        elem.addEventListener('drop', (event) => this._dragDrop(event), true);
     }
 
-    createCard() {
-        this.state.edit = true;
+    createCard(cardText, idCard, idColumn, isNew = true) {
+        let card;
 
-        const card = new Card({
-                idCard: this.state.idCard,
-                idColumn: this.state.idColumn
-            },
-            {
-                dataId: this.state.idCard,
-                className: 'cards-box__card card',
-                onclick: (event) => this._cardHandler(event, this.state.idCard)
-            }).render();
+        if (!isNew) {
+            card = this._createCardField(cardText, idCard);
 
-        this.node.lastChild.remove();
-        this.node.append(createEl(card));
+            this.node.insertBefore(card, this.node.lastChild);
+            store.dispatch(addCard({cardText, idColumn, idCard}))
+            return;
+        } else {
+            card = new Card({
+                    idCard,
+                    idColumn,
+                    isNew
+                },
+                {
+                    dataId: this.state.idCard,
+                    className: 'cards-box__card card',
+                    onclick: (event) => this._cardHandler(event)
+                }).render();
 
-        store.dispatch(addCard({cardText: '', idColumn: this.state.idColumn, idCard: this.state.idCard}))
-        this.state.idCard += 1;
+            this.node.lastChild.remove();
+            this.node.append(createEl(card));
+
+            store.dispatch(addCard({cardText, idColumn, idCard}))
+        }
+
+        this.state.idCard = idCard + 1;
     }
 
     _cardHandler(event) {
@@ -60,20 +73,19 @@ export default class Cards extends Factory {
 
         switch (target.name) {
             case 'save': {
-                this.state.value = form.field.value;
-                this.state.edit = false;
+                const text = form.field.value;
 
-                if (!this.state.value.trim()) {
+                if (!text.trim()) {
                     document.querySelector('.modal').classList.add('modal__active')
                 } else {
-                    const div = this._createCardField(idCard);
+                    const div = this._createCardField(text, idCard);
 
                     form.parentElement.append(this.addCardButton)
                     form.replaceWith(div);
                 }
 
                 store.dispatch(editCard({
-                    newCardText: this.state.value,
+                    newCardText: text,
                     idCard,
                     idColumn: this.state.idColumn
                 }))
@@ -81,7 +93,6 @@ export default class Cards extends Factory {
                 break;
             }
             case 'delete': {
-                this.state.edit = false;
                 store.dispatch(deleteCard({idCard, idColumn: this.state.idColumn}))
 
                 form.parentElement.append(this.addCardButton)
@@ -92,14 +103,15 @@ export default class Cards extends Factory {
         }
     }
 
-    _createCardField(id) {
+    _createCardField(cardText, id) {
+        console.log('card text', cardText)
         const card = new Factory('div', {className: 'cards-box__card card', dataId: id, draggable: true}).render()
-        const cardField = new Factory('div', {className: 'card__field'}, this.state.value).render();
+        const cardField = new Factory('div', {className: 'card__field'}, cardText).render();
         const editIconBtn = new Button('img', {
             className: 'card__icon pencil-icon',
             src: 'https://image.flaticon.com/icons/png/512/117/117476.png',
             onclick: () => this._editCard(card, cardField.innerHTML, id)
-        }).render()
+        }).render();
 
         card.append(cardField);
         card.append(editIconBtn);
@@ -108,8 +120,6 @@ export default class Cards extends Factory {
     }
 
     _editCard(elem, value, id) {
-        this.state.edit = true;
-
         const card = new Card({
                 idCard: this.state.idCard,
                 idColumn: this.state.idColumn,
@@ -118,23 +128,29 @@ export default class Cards extends Factory {
             {
                 dataId: id,
                 className: 'cards-box__card card',
-                onclick: (event) => this._cardHandler(event, this.state.idCard)
+                onclick: (event) => this._cardHandler(event)
             }).render();
 
         elem.replaceWith(card);
     }
 
     _dragStart(event) {
-        event.stopImmediatePropagation();
-        setTimeout(() => {
-            if (event.target.classList.contains('card')) {
+        this.state.draggingItem = event.target;
+
+        if (event.target.classList.contains('card')) {
+            event.stopPropagation();
+            setTimeout(() => {
                 event.target.classList.add('selected-card');
-            }
-        }, 0)
+            }, 0)
+        } else {
+            event.preventDefault();
+        }
     }
 
     _dragEnd(event) {
-        event.stopImmediatePropagation();
+        this.state.draggingItem = null;
+
+        event.stopPropagation();
         if (event.target.classList.contains('card')) {
             event.target.classList.remove('selected-card');
         }
@@ -145,30 +161,54 @@ export default class Cards extends Factory {
     }
 
     _dragOver(event) {
+        event.stopPropagation();
         event.preventDefault();
-        event.stopImmediatePropagation();
 
-        if (event.target.classList.contains('card')) {
-            const active = this.querySelector('.selected-card');
-            const current = event.target;
-            const isMoveable = active !== current && current.classList.contains('card');
+        const current = event.target;
 
-            if (!isMoveable) {
+        if (current.classList.contains('card__field')) {
+            const active = document.querySelector('.selected-card');
+
+            if (active === current || !active) {
                 return;
             }
 
-            const next = current === active.nextElementSibling ? current.nextElementSibling : current;
+            let next;
+            if (current.parentElement === active.nextElementSibling) {
+                if (!current.parentElement.nextElementSibling) {
+                    return;
+                }
 
-            this.insertBefore(active, next);
+                next = current.parentElement.nextElementSibling;
+            } else {
+                next = current.parentElement;
+            }
+
+            event.target.parentElement.parentElement.insertBefore(active, next);
         }
+    }
+
+    _dragDrop(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        // event.target.parentElement.insertBefore(this.state.draggingItem, event.target.parentElement)
+    }
+
+    componentDidMount() {
+        // if (Object.values(this.state.cards).length && this.state.cards) {
+        //     Object.values(this.state.cards).forEach(card => {
+        //         console.log('card id', card.id)
+        //         console.log('card text', card.text)
+        //         this.createCard(card.text, card.id, this.state.idColumn, false);
+        //     });
+        // }
     }
 
     render() {
         const cards = this.node;
         cards.append(this.addCardButton);
 
-        return (
-            cards
-        )
+        return cards;
     }
 }

@@ -3,13 +3,16 @@ import cardsReducer from "./reducers/cardReducer";
 import combineReducers from "./reducers/combineReducers";
 import appReducer from "./reducers/appReducer";
 
-export const createStore = (reducer, initialState = undefined) => {
+export const createStore = (reducer, initialState) => {
     return {
         listeners: [],
-        state: initialState,
+        state: reducer(initialState, {type: null}),
         dispatch(action) {
             this.state = reducer(this.state, action);
             this.listeners.forEach(listener => listener(this.state))
+        },
+        getState() {
+            return this.state;
         },
         subscribe(newListener) {
             this.listeners.push(newListener);

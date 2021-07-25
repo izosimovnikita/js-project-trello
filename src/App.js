@@ -1,86 +1,118 @@
 import Column from "./components/column/column.module";
 import Modal from "./components/modal/modal.module";
+import ThemeSwitcher from "./components/theme-switcher/theme-switcher.module";
 import {createEl, h} from "./utils/Element";
+const themes = require('./assets/themes/themes.json');
 
 import store from "./store/store";
-import {addColumn} from "./store/reducers/actions";
+import {addColumn} from "./store/actions/actions";
 import Button from "./components/button/button.component";
+import Factory from "./modules/Factory";
 
-let draggedItem = null;
-let idColumn = 0;
+export default class App extends Factory {
+    constructor(state) {
+        super();
 
-store.subscribe((state) => console.log(state))
 
-function createColumn() {
-    store.dispatch(addColumn({title: 'Новая колонка', idColumn}));
+        this.state = state;
 
-    const column = new Column({idColumn}, {className: 'columns__column column', draggable: true}).render();
-    idColumn++;
-
-    document.querySelector('.columns').append(createEl(column));
-}
-
-function dragStart(event) {
-    draggedItem = event.target;
-
-    setTimeout(() => {
-        if (event.target.classList.contains('column')) {
-            event.target.classList.add('selected-column');
-        }
-    }, 0)
-}
-
-function dragEnd(event) {
-    draggedItem = null;
-
-    if (event.target.classList.contains('column')) {
-        event.target.classList.remove('selected-column');
+        this.idColumn = 0;
+        this.draggedItem = null;
     }
-}
 
-function dragOver(event) {
-    event.preventDefault();
+    _dragStart(event) {
+        if (event.target.classList.contains('column')) {
+            setTimeout(() => {
+                event.target.classList.add('selected-column');
+            }, 0)
+        } else {
+            event.preventDefault();
+        }
+    }
 
-    if (event.target.classList.contains('column')) {
-        const active = this.querySelector('.selected-column');
+    _dragEnd(event) {
+        if (event.target.classList.contains('column')) {
+            event.target.classList.remove('selected-column');
+        }
+    }
+
+    _dragOver(event) {
+        event.preventDefault();
         const current = event.target;
 
-        const isMoveable = active !== current && current.classList.contains('column');
+        if (event.target.classList.contains('column')) {
+            const active = this.querySelector('.selected-column');
 
-        if (!isMoveable) {
-            return;
+            if (active === current || !active) {
+                return;
+            }
+
+            const next = current === active.nextElementSibling ? current.nextElementSibling : current;
+
+            this.insertBefore(active, next);
         }
-
-        const next = current === active.nextElementSibling ? current.nextElementSibling : current;
-
-        this.insertBefore(active, next);
     }
-}
 
-function dragEnter(event) {
-    event.preventDefault();
-}
+    _dragEnter(event) {
+        event.preventDefault();
+    }
 
-export default function App() {
-    const addColumnBtn = new Button('button', {className: 'app__create-btn', onclick: createColumn}, '+ Добавить' +
-        ' новую колонку').render();
+    createColumn(title, idColumn, cards) {
+        const column = new Column({title, idColumn, cards}, {
+            className: 'columns__column column',
+            draggable: true
+        }).render();
 
-    const modal = new Modal({title: 'Введите название карточки!'}, {className: 'modal'}).render();
+        store.dispatch(addColumn({title, idColumn, cards}));
+        this.idColumn++;
 
-    document.body.append(modal);
+        document.querySelector('.columns').append(column);
+    }
 
-    return createEl(
-        h('div', {className: 'app'},
-            h('div', {
-                className: 'app__columns columns',
-                ondragstart: dragStart,
-                ondragend: dragEnd,
-                ondragenter: dragEnter,
-                ondragover: dragOver
-            }),
-            (addColumnBtn)
+    componentDidMount() {
+        if (Object.values(this.state).length && this.state) {
+            Object.values(this.state).forEach(column => {
+                    this.createColumn(column.title, column.id, column.cards)
+                }
+            );
+        }
+    }
+
+    render() {
+        const title = this.state[this.idColumn]?.title || 'Заголовок списка';
+        const cards = this.state[this.idColumn]?.cards || {};
+
+        const app = new Factory('div', {className: 'app'}).render();
+
+        const columns = new Factory('div', {
+            className: 'app__columns columns',
+            ondragstart: this._dragStart,
+            ondragend: this._dragEnd,
+            ondragenter: this._dragEnter,
+            ondragover: this._dragOver
+        }).render();
+
+        const addColumnBtn = new Button('button', {
+            className: 'app__create-btn',
+            onclick: () => this.createColumn(title, this.idColumn, cards)
+        }, '+ Добавить' +
+            ' новую колонку').render();
+
+        const themeSwitcher = new ThemeSwitcher({themes}).render();
+
+        app.append(columns);
+        app.append(addColumnBtn);
+        app.append(themeSwitcher);
+
+        const modal = new Modal({title: 'Введите название карточки!'}, {className: 'modal'}).render();
+
+        document.body.append(modal);
+
+        return (
+            app
         )
-    )
+
+    }
 }
 
 

@@ -1,74 +1,99 @@
-import Factory from "../Factory";
+import Factory from "../../modules/Factory";
 import Cards from "../cards/cards.module";
-import Card from "../card/card.module";
 import Button from "../button/button.module";
 import {createEl, h} from "../../utils/Element";
 
 import store from "../../store/store";
-import {addCard, deleteColumn} from "../../store/reducers/actions";
+import {deleteColumn, editColumnTitle} from "../../store/actions/actions";
 
-class Column extends Factory {
-    constructor(state, props) {
+export default class Column extends Factory {
+    constructor(state, props, children) {
         super('div', props);
 
         this.state = {
             draggedItem: null,
-            idColumn: state.idColumn
+            idColumn: state.idColumn,
+            title: state.title,
+            cards: state.cards
         }
-
-        this.cards = new Cards({idColumn: this.state.idColumn}, {className: 'column__cards-box cards-box'}).render();
     }
 
-    _deleteColumn(parent) {
-        parent.remove();
+    _deleteColumn(event) {
+        event.target.parentElement.remove();
 
         store.dispatch(deleteColumn({idColumn: this.state.idColumn}))
     }
 
-    _dblClick() {
-        this.setAttribute('contenteditable', true);
+    _editTitle(event) {
+        if (event.target.classList.contains('title-box__block')) {
+            event.target.previousElementSibling.value = event.target.innerHTML;
+            event.target.previousElementSibling.classList.remove('hidden');
+            event.target.classList.add('hidden');
+        } else {
+            event.preventDefault();
+        }
     }
 
-    _onBlur() {
-        if (!this.innerHTML.trim()) {
-            alert('Введите заголовок!');
+    _onFocutOutTitle(event) {
+        if (event.target.classList.contains('title-box__textarea')) {
+            if (!event.target.value.trim()) {
+                alert('Введите заголовок!');
+            } else {
+                event.target.nextElementSibling.innerHTML = event.target.value;
+                event.target.nextElementSibling.classList.remove('hidden');
+                event.target.classList.add('hidden');
+
+                store.dispatch(editColumnTitle({
+                    idColumn: this.state.idColumn,
+                    newColumnTitle: event.target.value
+                }))
+            }
         } else {
-            this.removeAttribute('contenteditable');
+            event.preventDefault();
         }
     }
 
     render() {
-        const column = this.node;
+        const column = new Factory('div', {
+            className: 'columns__column column',
+            draggable: true}).render();
 
-        const columnTitle = new Factory('div', {
-            className: 'column__title',
-            onblur: this._onBlur,
-            ondblclick: this._dblClick,
-            contentEditable: true
-        }, 'Новая' +
-            ' колонка').render()
+        const titleBox = new Factory('div', {
+            className: 'column__title-box title-box',
+            onClick: (event) => this._editTitle(event),
+            onFocusOut: (event) => this._onFocutOutTitle(event)
+        }).render();
 
-        const columnAddButton = new Button('button', {
-                className: 'column__button button',
-                onclick: () => this.createCard(this.state.idColumn)
-            }, '+ Добавить карточку').render();
+        const textareaTitle = new Factory('textarea', {
+            className: 'title-box__textarea hidden',
+            maxLength: '512',
+            spellcheck: false
+        }).render()
 
-        const columnDeleteIconBtn = new Button('img', {
-                    className: 'column__icon trash-icon',
-                    src: 'https://image.flaticon.com/icons/png/512/748/748023.png',
-                    onclick: () => this._deleteColumn(column)
-                }
-            ).render()
+        const blockTitle = new Factory('div', {
+            className: 'title-box__block',
+        }, this.state.title).render();
 
-        column.append(columnTitle);
-        column.append(this.cards)
-        // column.append(columnAddButton);
-        column.append(columnDeleteIconBtn);
+        const cardsBox = new Cards({
+                idColumn: this.state.idColumn,
+                cards: this.state.cards
+            }, {className: 'column__cards-box cards-box'}
+        );
 
-        return (
-            column
-        )
+        const deleteBtn = new Button('img', {
+                className: 'column__icon trash-icon',
+                src: 'https://image.flaticon.com/icons/png/512/748/748023.png',
+                onclick: (event) => this._deleteColumn(event)
+            }
+        ).render();
+
+        titleBox.append(textareaTitle);
+        titleBox.append(blockTitle);
+        column.append(titleBox);
+        column.append(cardsBox.render());
+        cardsBox.componentDidMount();
+        column.append(deleteBtn);
+
+        return column;
     }
 }
-
-export default Column;

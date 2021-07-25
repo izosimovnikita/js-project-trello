@@ -1,4 +1,4 @@
-import Factory from "../Factory";
+import Factory from "../../modules/Factory";
 import {createEl, h} from "../../utils/Element";
 
 export default class Modal extends Factory {

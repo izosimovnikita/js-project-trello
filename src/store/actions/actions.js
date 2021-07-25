@@ -10,7 +10,8 @@ export function addColumn(args) {
         type: ADD_COLUMN,
         payload: {
             title: args.title,
-            idColumn: args.idColumn
+            idColumn: args.idColumn,
+            cards: args.cards
         }
     }
 }
@@ -20,6 +21,16 @@ export function deleteColumn(args) {
         type: DELETE_COLUMN,
         payload: {
             idColumn: args.idColumn
+        }
+    }
+}
+
+export function editColumnTitle(args) {
+    return {
+        type: EDIT_COLUMN_TITLE,
+        payload: {
+            idColumn: args.idColumn,
+            newColumnTitle: args.newColumnTitle
         }
     }
 }

@@ -1,4 +1,4 @@
-import Factory from "../Factory";
+import Factory from "../../modules/Factory";
 
 export default class Button extends Factory {
     constructor(tagName, props, children) {

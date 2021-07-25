@@ -1,4 +1,4 @@
-import {ADD_CARD, DELETE_CARD, EDIT_CARD} from "./actions";
+import {ADD_CARD, DELETE_CARD, EDIT_CARD} from "../actions/actions";
 
 const initialState = {
     cards: {}

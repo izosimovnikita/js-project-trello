@@ -1,17 +1,21 @@
-import {ADD_CARD, ADD_COLUMN, DELETE_CARD, DELETE_COLUMN, EDIT_CARD, EDIT_COLUMN_TITLE} from "./actions";
+import {ADD_CARD, ADD_COLUMN, DELETE_CARD, DELETE_COLUMN, EDIT_CARD, EDIT_COLUMN_TITLE} from "../actions/actions";
 
 const initialState = {};
+
+const newColumnId = (columns) => {
+    return columns.reduce((maxId, column) => Math.max(maxId, column.id), -1) + 1;
+}
 
 const appReducer = (state = initialState, action) => {
     switch (action.type) {
         case ADD_COLUMN: {
-            const {title, idColumn} = action.payload;
+            const {title, idColumn, cards = {}} = action.payload;
             return {
                 ...state,
                 [idColumn]: {
                     id: idColumn,
                     title,
-                    cards: {}
+                    cards
                 }
             }
         }
@@ -22,10 +26,16 @@ const appReducer = (state = initialState, action) => {
         }
         case EDIT_COLUMN_TITLE: {
             const {idColumn, newColumnTitle} = action.payload;
-            return {}
+            return {
+                ...state,
+                [idColumn]: {
+                    ...state[idColumn],
+                    title: newColumnTitle
+                }
+            }
         }
         case ADD_CARD: {
-            const {cardText, idColumn, idCard} = action.payload;
+            const {cardText = '', idColumn, idCard} = action.payload;
             return {
                 ...state,
                 [idColumn]: {

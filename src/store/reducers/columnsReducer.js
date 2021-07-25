@@ -1,4 +1,4 @@
-import {ADD_COLUMN, DELETE_COLUMN, EDIT_COLUMN_TITLE} from "./actions";
+import {ADD_COLUMN, DELETE_COLUMN, EDIT_COLUMN_TITLE} from "../actions/actions";
 
 const initialState = {
     columns: {}
