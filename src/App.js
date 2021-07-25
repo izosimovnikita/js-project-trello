@@ -2,6 +2,7 @@ import Column from "./components/column/column.module";
 import Modal from "./components/modal/modal.module";
 import ThemeSwitcher from "./components/theme-switcher/theme-switcher.module";
 import {createEl, h} from "./utils/Element";
+
 const themes = require('./assets/themes/themes.json');
 
 import store from "./store/store";
@@ -57,31 +58,30 @@ export default class App extends Factory {
         event.preventDefault();
     }
 
-    createColumn(title, idColumn, cards) {
+    createColumn(title, idColumn, cards, isNew = true) {
         const column = new Column({title, idColumn, cards}, {
             className: 'columns__column column',
             draggable: true
         }).render();
 
-        store.dispatch(addColumn({title, idColumn, cards}));
-        this.idColumn++;
+        if (isNew) {
+            store.dispatch(addColumn({title, idColumn, cards}));
+        }
 
+        this.idColumn = idColumn + 1;
         document.querySelector('.columns').append(column);
     }
 
     componentDidMount() {
         if (Object.values(this.state).length && this.state) {
             Object.values(this.state).forEach(column => {
-                    this.createColumn(column.title, column.id, column.cards)
+                    this.createColumn(column.title, column.id, column.cards, false)
                 }
             );
         }
     }
 
     render() {
-        const title = this.state[this.idColumn]?.title || 'Заголовок списка';
-        const cards = this.state[this.idColumn]?.cards || {};
-
         const app = new Factory('div', {className: 'app'}).render();
 
         const columns = new Factory('div', {
@@ -94,7 +94,7 @@ export default class App extends Factory {
 
         const addColumnBtn = new Button('button', {
             className: 'app__create-btn',
-            onclick: () => this.createColumn(title, this.idColumn, cards)
+            onclick: () => this.createColumn('Заголовок списка', this.idColumn, {})
         }, '+ Добавить' +
             ' новую колонку').render();
 

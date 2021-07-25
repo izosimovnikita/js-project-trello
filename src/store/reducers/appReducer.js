@@ -1,6 +1,6 @@
 import {ADD_CARD, ADD_COLUMN, DELETE_CARD, DELETE_COLUMN, EDIT_CARD, EDIT_COLUMN_TITLE} from "../actions/actions";
 
-const initialState = {};
+const initialState = JSON.parse(localStorage.getItem('columns')) || {};
 
 const newColumnId = (columns) => {
     return columns.reduce((maxId, column) => Math.max(maxId, column.id), -1) + 1;

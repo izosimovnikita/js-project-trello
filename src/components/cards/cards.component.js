@@ -10,19 +10,11 @@ export default class Cards extends Factory {
     constructor(state, props, children) {
         super('div', props);
 
-        this.addDnD(this.node);
-
-        this.addCardButton = new Button('button', {
-            className: 'column__button button',
-            onclick: () => this.createCard('', this.state.idCard, this.state.idColumn)
-        }, '+ Добавить карточку').render();
-
         this.state = {
             idColumn: state.idColumn,
             idCard: 0,
             cards: state.cards,
             draggingItem: null,
-            edit: false
         }
     }
 
@@ -31,32 +23,27 @@ export default class Cards extends Factory {
         elem.addEventListener('dragend', (event) => this._dragEnd(event));
         elem.addEventListener('dragenter', (event) => this._dragEnter(event));
         elem.addEventListener('dragover', (event) => this._dragOver(event), true);
-        elem.addEventListener('drop', (event) => this._dragDrop(event), true);
+        elem.addEventListener('drop', (event) => this._dragDrop(event));
     }
 
-    createCard(cardText, idCard, idColumn, isNew = true) {
-        let card;
+    createCard(cardText = '', idCard, idColumn, isNew = true) {
+        const card = new Card({
+                cardText,
+                idCard,
+                idColumn
+            },
+            {
+                dataId: idCard,
+                formHandler: (event) => this._cardHandler(event)
+            }).render();
 
         if (!isNew) {
-            card = this._createCardField(cardText, idCard);
-
+            card.querySelector('.card__form').classList.add('hidden');
+            card.querySelector('.form-block').classList.remove('hidden');
             this.node.insertBefore(card, this.node.lastChild);
-            store.dispatch(addCard({cardText, idColumn, idCard}))
-            return;
         } else {
-            card = new Card({
-                    idCard,
-                    idColumn,
-                    isNew
-                },
-                {
-                    dataId: this.state.idCard,
-                    className: 'cards-box__card card',
-                    onclick: (event) => this._cardHandler(event)
-                }).render();
-
-            this.node.lastChild.remove();
-            this.node.append(createEl(card));
+            this.node.lastChild.classList.add('hidden');
+            this.node.insertBefore(createEl(card), this.node.lastChild);
 
             store.dispatch(addCard({cardText, idColumn, idCard}))
         }
@@ -78,10 +65,11 @@ export default class Cards extends Factory {
                 if (!text.trim()) {
                     document.querySelector('.modal').classList.add('modal__active')
                 } else {
-                    const div = this._createCardField(text, idCard);
+                    form.nextElementSibling.querySelector('.form-block__field').innerHTML = text;
+                    form.classList.add('hidden');
+                    form.nextElementSibling.classList.remove('hidden');
 
-                    form.parentElement.append(this.addCardButton)
-                    form.replaceWith(div);
+                    this.node.lastChild.classList.remove('hidden');
                 }
 
                 store.dispatch(editCard({
@@ -94,29 +82,12 @@ export default class Cards extends Factory {
             }
             case 'delete': {
                 store.dispatch(deleteCard({idCard, idColumn: this.state.idColumn}))
-
-                form.parentElement.append(this.addCardButton)
+                form.parentElement.parentElement.lastChild.classList.remove('hidden')
                 form.remove();
 
                 break;
             }
         }
-    }
-
-    _createCardField(cardText, id) {
-        console.log('card text', cardText)
-        const card = new Factory('div', {className: 'cards-box__card card', dataId: id, draggable: true}).render()
-        const cardField = new Factory('div', {className: 'card__field'}, cardText).render();
-        const editIconBtn = new Button('img', {
-            className: 'card__icon pencil-icon',
-            src: 'https://image.flaticon.com/icons/png/512/117/117476.png',
-            onclick: () => this._editCard(card, cardField.innerHTML, id)
-        }).render();
-
-        card.append(cardField);
-        card.append(editIconBtn);
-
-        return card;
     }
 
     _editCard(elem, value, id) {
@@ -166,7 +137,7 @@ export default class Cards extends Factory {
 
         const current = event.target;
 
-        if (current.classList.contains('card__field')) {
+        if (current.classList.contains('form-block__field')) {
             const active = document.querySelector('.selected-card');
 
             if (active === current || !active) {
@@ -174,40 +145,41 @@ export default class Cards extends Factory {
             }
 
             let next;
-            if (current.parentElement === active.nextElementSibling) {
-                if (!current.parentElement.nextElementSibling) {
+            if (current.parentElement.parentElement === active.nextElementSibling) {
+                if (!current.parentElement.parentElement.nextElementSibling) {
                     return;
                 }
 
-                next = current.parentElement.nextElementSibling;
+                next = current.parentElement.parentElement.nextElementSibling;
             } else {
-                next = current.parentElement;
+                next = current.parentElement.parentElement;
             }
 
-            event.target.parentElement.parentElement.insertBefore(active, next);
+            event.target.parentElement.parentElement.parentElement.insertBefore(active, next);
         }
     }
 
-    _dragDrop(event) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        // event.target.parentElement.insertBefore(this.state.draggingItem, event.target.parentElement)
-    }
-
     componentDidMount() {
-        // if (Object.values(this.state.cards).length && this.state.cards) {
-        //     Object.values(this.state.cards).forEach(card => {
-        //         console.log('card id', card.id)
-        //         console.log('card text', card.text)
-        //         this.createCard(card.text, card.id, this.state.idColumn, false);
-        //     });
-        // }
+        if (Object.values(this.state.cards).length && this.state.cards) {
+            Object.values(this.state.cards).forEach(card => {
+                if (card.text.trim() && card.text.length) {
+                    this.createCard(card.text, card.id, this.state.idColumn, false);
+                }
+            });
+        }
     }
 
     render() {
         const cards = this.node;
-        cards.append(this.addCardButton);
+
+        const addCardButton = new Button('button', {
+            className: 'column__button button',
+            onclick: () => this.createCard('', this.state.idCard, this.state.idColumn)
+        }, '+ Добавить карточку').render();
+
+        cards.append(addCardButton);
+
+        this.addDnD(cards);
 
         return cards;
     }

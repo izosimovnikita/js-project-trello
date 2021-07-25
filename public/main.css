@@ -241,23 +241,39 @@ h6 {
     background: #a5a5a5;
 }
 
-.cards-box__card {
-    position: relative;
-}
-
-.cards-box__card + .cards-box__card {
-    margin-top: 7px;
-}
-
-.cards-box__card.card:hover .card__icon {
+.cards-box__card.card:hover .form-block__icon {
     opacity: 1;
 }
 
-.card {
+.card-box__card{
+    position: relative;
+}
+
+.card-box__card:hover .form-block__icon {
+    opacity: 1;
+}
+
+.card-box__card + .card-box__card {
+    margin-top: 7px;
+}
+
+.card-box {
     cursor: pointer;
 }
 
-.card__icon {
+.card {
+    position: relative;
+}
+
+.card__form {
+    cursor: pointer;
+}
+
+.card + .card {
+    margin-top: 5px;
+}
+
+.form-block__icon {
     position: absolute;
     top: 7px;
     right: 5px;
@@ -270,11 +286,11 @@ h6 {
     transition: opacity .2s ease-in-out, background-color .2s ease-in-out;
 }
 
-.card__icon:hover {
+.form-block__icon:hover {
     background-color: #e5e4e4;
 }
 
-.card__input {
+.card-form__input {
     width: 100%;
 
     padding: 10px;
@@ -291,11 +307,11 @@ h6 {
     transition: background-color .2s ease-in-out;
 }
 
-.card__input:hover {
+.card-form__input:hover {
     opacity: .6;
 }
 
-.card__save {
+.card-form__save {
     padding: 10px;
     margin-top: 5px;
     margin-right: 7px;
@@ -312,11 +328,11 @@ h6 {
     transition: opacity .2s ease-in-out;
 }
 
-.card__save:hover {
+.card-form__save:hover {
     opacity: .6;
 }
 
-.card__delete {
+.card-form__delete {
     padding: 10px;
     margin-top: 5px;
     border-radius: 4px;
@@ -332,7 +348,7 @@ h6 {
     transition: opacity .2s ease-in-out;
 }
 
-.card__delete:hover {
+.card-form__delete:hover {
     opacity: .6;
 }
 
@@ -358,7 +374,7 @@ h6 {
     height: 25px;
 }
 
-.card__field {
+.form-block__field {
     width: 100%;
 
     padding: 10px;
