@@ -1,7 +1,6 @@
 import Factory from "../../modules/Factory";
 import Cards from "../cards/cards.module";
 import Button from "../button/button.module";
-import {createEl, h} from "../../utils/Element";
 
 import store from "../../store/store";
 import {deleteColumn, editColumnTitle} from "../../store/actions/actions";
