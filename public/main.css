@@ -73,8 +73,12 @@ h6 {
 }
 
 .app__create-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
     height: fit-content;
-    min-width: 210px;
+    min-width: 234px;
 
     margin: 10px;
     padding: 15px;
@@ -85,14 +89,16 @@ h6 {
     color: #fffffe;
     cursor: pointer;
     font-weight: 600;
+    font-size: 15px;
     box-shadow: 4px 7px 8px 0 var(--color-shadow);;
 
-    transition: background-color .2s ease-in-out;
+    transition: background-color .2s ease-in-out, box-shadow .2s ease-in-out;
 }
 
 
 .app__create-btn:hover {
     background-color: var(--color-primary);
+    box-shadow: none;
 }
 
 .app__columns {
@@ -111,13 +117,50 @@ h6 {
 
     width: 250px;
     height: fit-content;
-    max-height: 95%;
+    max-height: 88%;
 
     border-radius: 4px;
     background-color: var(--color-column);
     box-shadow: 4px 7px 8px 2px var(--color-shadow);
 
+    overflow: hidden;
     cursor: move;
+
+    transition: .2s;
+}
+
+.animate-card {
+    animation-name: deleting-card;
+    animation-duration: .3s;
+}
+
+@keyframes deleting-card {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-200%);
+    }
+}
+
+.animate-col {
+    animation-name: deleting-col;
+    animation-duration: .3s;
+}
+
+@keyframes deleting-col {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-200%);
+    }
+}
+
+.column:hover {
+    box-shadow: none;
 }
 
 .column:hover .column__icon {
@@ -176,6 +219,9 @@ h6 {
 }
 
 .column__button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     width: 100%;
 
     padding: 10px;
@@ -191,6 +237,11 @@ h6 {
     background-color: transparent;
 
     transition: background-color .2s linear;
+}
+
+.column-button__icon {
+    width: 15px;
+    height: 15px;
 }
 
 .column__button:hover {
@@ -303,7 +354,7 @@ h6 {
     text-align: center;
     word-wrap: break-word;
 
-    box-shadow: 0 1px 0 #ccc;
+    box-shadow: 0 2px 0 rgb(9 30 66 / 25%);
     transition: background-color .2s ease-in-out;
 }
 
@@ -387,7 +438,7 @@ h6 {
     text-align: center;
     word-wrap: break-word;
 
-    box-shadow: 0 1px 0 #ccc;
+    box-shadow: 0 2px 0 rgb(9 30 66 / 25%);
     transition: background-color .2s ease-in-out;
 }
 
@@ -464,7 +515,8 @@ h6 {
 
     position: absolute;
     bottom: 30px;
-    right: 30px;
+    right: 50%;
+    transform: translateX(50%);
 
     list-style: none;
     gap: 10px;
@@ -479,16 +531,23 @@ h6 {
     border: 2px solid rgb(128, 119, 105);
     box-shadow: 0 0 16px 4px rgba(34, 60, 80, 0.5);
     cursor: pointer;
+
+    transition: box-shadow .3s ease-in-out;
 }
 
 .switcher-button:active {
     border: 2px solid #fff;
 }
 
+.switcher-button:hover {
+    box-shadow: 0 0 5px 1px #fff;
+}
+
 .switcher-palette {
     display: flex;
     margin-left: -7px;
     padding: 5px;
+
 }
 
 .switcher-palette__hue {
@@ -499,4 +558,10 @@ h6 {
     border: 2px solid rgb(128, 119, 105);
     border-radius: 50%;
     margin-right: -7px;
+}
+
+.signature {
+    position: absolute;
+    top: 0;
+    right: 0;
 }

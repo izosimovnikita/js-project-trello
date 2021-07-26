@@ -23,7 +23,6 @@ export default class Cards extends Factory {
         elem.addEventListener('dragend', (event) => this._dragEnd(event));
         elem.addEventListener('dragenter', (event) => this._dragEnter(event));
         elem.addEventListener('dragover', (event) => this._dragOver(event), true);
-        elem.addEventListener('drop', (event) => this._dragDrop(event));
     }
 
     createCard(cardText = '', idCard, idColumn, isNew = true) {
@@ -82,8 +81,14 @@ export default class Cards extends Factory {
             }
             case 'delete': {
                 store.dispatch(deleteCard({idCard, idColumn: this.state.idColumn}))
-                form.parentElement.parentElement.lastChild.classList.remove('hidden')
-                form.remove();
+                form.parentElement.parentElement.lastChild.classList.remove('hidden');
+                form.parentElement.classList.add('animate-card');
+                form.parentElement.getAnimations()
+                    .forEach((anim, i) => {
+                        if (i === 0) {
+                            anim.onfinish = () => form.parentElement.remove();
+                        }
+                    });
 
                 break;
             }
@@ -173,9 +178,15 @@ export default class Cards extends Factory {
         const cards = this.node;
 
         const addCardButton = new Button('button', {
-            className: 'column__button button',
+            className: 'column__button column-button',
             onclick: () => this.createCard('', this.state.idCard, this.state.idColumn)
-        }, '+ Добавить карточку').render();
+        }, [
+            new Factory('img', {
+                className: 'column-button__icon',
+                src: 'https://image.flaticon.com/icons/png/512/748/748113.png'
+            }).render(),
+            'Добавить карточку'
+        ]).render();
 
         cards.append(addCardButton);
 

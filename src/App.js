@@ -95,8 +95,13 @@ export default class App extends Factory {
         const addColumnBtn = new Button('button', {
             className: 'app__create-btn',
             onclick: () => this.createColumn('Заголовок списка', this.idColumn, {})
-        }, '+ Добавить' +
-            ' новую колонку').render();
+        }, [
+            new Factory('img', {
+                className: 'column-button__icon',
+                src: 'https://image.flaticon.com/icons/png/512/748/748113.png'
+            }).render(),
+            'Добавить новый список'
+        ]).render();
 
         const themeSwitcher = new ThemeSwitcher({themes}).render();
 

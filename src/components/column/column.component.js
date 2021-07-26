@@ -19,7 +19,13 @@ export default class Column extends Factory {
     }
 
     _deleteColumn(event) {
-        event.target.parentElement.remove();
+        event.target.parentElement.classList.add('animate-col');
+        event.target.parentElement.getAnimations()
+            .forEach((anim, i) => {
+                if (i === 0) {
+                    anim.onfinish = () => event.target.parentElement.remove();
+                }
+            });
 
         store.dispatch(deleteColumn({idColumn: this.state.idColumn}))
     }
