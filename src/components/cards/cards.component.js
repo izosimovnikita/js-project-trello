@@ -41,6 +41,7 @@ export default class Cards extends Factory {
             card.querySelector('.form-block').classList.remove('hidden');
             this.node.insertBefore(card, this.node.lastChild);
         } else {
+            console.log(this.node.lastChild)
             this.node.lastChild.classList.add('hidden');
             this.node.insertBefore(createEl(card), this.node.lastChild);
 

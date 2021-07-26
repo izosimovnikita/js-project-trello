@@ -110,8 +110,10 @@ export default class App extends Factory {
         app.append(themeSwitcher);
 
         const modal = new Modal({title: 'Введите название карточки!'}, {className: 'modal'}).render();
+        const signature = new Factory('img', {className: 'signature', src: 'https://i.imgur.com/8DB2Ao6.png'}).render()
 
         document.body.append(modal);
+        document.body.append(signature);
 
         return (
             app
