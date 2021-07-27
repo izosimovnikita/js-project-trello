@@ -1,0 +1,1 @@
+export const startApp = new Event('startapp', {bubbles: true});
