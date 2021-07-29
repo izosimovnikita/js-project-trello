@@ -22,7 +22,11 @@ export default class Column extends Factory {
         event.target.parentElement.getAnimations()
             .forEach((anim, i) => {
                 if (i === 0) {
-                    anim.onfinish = () => event.target.parentElement.remove();
+                    anim.onfinish = () => {
+                        event.target.parentElement.firstChild.removeEventListener('click', this._editTitle);
+                        event.target.parentElement.firstChild.removeEventListener('focusout', this._onFocutOutTitle);
+                        event.target.parentElement.remove();
+                    }
                 }
             });
 

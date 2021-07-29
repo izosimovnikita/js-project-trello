@@ -86,7 +86,10 @@ export default class Cards extends Factory {
                 form.parentElement.getAnimations()
                     .forEach((anim, i) => {
                         if (i === 0) {
-                            anim.onfinish = () => form.parentElement.remove();
+                            anim.onfinish = () => {
+                                form.removeEventListener('click', this._cardHandler);
+                                form.parentElement.remove();
+                            }
                         }
                     });
 
@@ -189,7 +192,6 @@ export default class Cards extends Factory {
         ]).render();
 
         cards.append(addCardButton);
-
         this.addDnD(cards);
 
         return cards;
